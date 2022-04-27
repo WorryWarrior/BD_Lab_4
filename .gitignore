@@ -1,0 +1,3 @@
+# Project exclude paths
+/lab4/.gradle/
+/lab4/build/
