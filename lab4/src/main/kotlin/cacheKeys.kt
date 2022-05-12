@@ -4,4 +4,10 @@ data class TamerKey(private val id: Long) : Key
 
 data class AnimalKey(private val id: Long) : Key
 
-object AllUserNotesKey : Key
+data class TicketKey(private val id: Long) : Key
+
+object AllTamersKey : Key
+
+object AllTicketsKey: Key
+
+object AllPerformancesKey : Key

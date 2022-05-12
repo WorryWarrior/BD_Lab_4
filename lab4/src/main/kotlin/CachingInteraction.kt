@@ -5,7 +5,7 @@ object CachingInteraction : DatabaseInteraction {
     private val cache = LruBasedCache<Key, List<ResultRow>>(128)
 
     override fun getAllPerformances() =
-        cache.getOrPut(AllUserNotesKey) { NonCachingInteraction.getAllPerformances() }
+        cache.getOrPut(AllPerformancesKey) { NonCachingInteraction.getAllPerformances() }
 
     override fun getTamer(id: Long) =
         cache.getOrPut(TamerKey(id)) { NonCachingInteraction.getTamer(id) }
@@ -14,7 +14,7 @@ object CachingInteraction : DatabaseInteraction {
         cache.getOrPut(AnimalKey(id)) { NonCachingInteraction.getAnimalPerformer(id) }
 
     override fun addTamer(_name: String, _surname: String) {
-        cache.remove(AllUserNotesKey)
+        cache.remove(AllTamersKey)
 
         NonCachingInteraction.addTamer(_name, _surname)
     }
@@ -32,7 +32,7 @@ object CachingInteraction : DatabaseInteraction {
     }
 
     override fun removeTicket(ticketId: Long) {
-        cache.remove(AllUserNotesKey)
+        cache.remove(AllTicketsKey)
 
         NonCachingInteraction.removeTicket(ticketId)
     }
