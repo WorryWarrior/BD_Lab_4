@@ -1,12 +1,13 @@
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
+import kotlin.random.Random
 
 //import kotlinx.datetime.*
 
 object NonCachingInteraction : DatabaseInteraction {
-    override fun getAllPerformances() =
-        transaction { Performance.selectAll().toList() }
+    override fun getPerformance(id: Long) =
+        transaction { Performance.select { Performance.id eq id }.toList() }
 
     override fun getTamer(id: Long) =
         transaction { Tamer.select { Tamer.id eq id }.toList() }
@@ -17,8 +18,8 @@ object NonCachingInteraction : DatabaseInteraction {
     override fun addTamer(_name: String, _surname: String) {
         transaction {
             Tamer.insert {
-                it[name] = _name
-                it[surname] = _surname
+                it[name] = generateText()
+                it[surname] = generateText()
                 it[dateOfBirth] = LocalDate.now()
             }
         }
@@ -27,7 +28,7 @@ object NonCachingInteraction : DatabaseInteraction {
     override fun changeTamerName(tamerId: Long, newTamerName: String) {
         transaction {
             Tamer.update({ Tamer.id eq tamerId }) {
-                it[name] = newTamerName
+                it[name] = generateText()
             }
         }
     }
@@ -35,7 +36,7 @@ object NonCachingInteraction : DatabaseInteraction {
     override fun changeAnimalFamily(animalId: Long, newFamily: String) {
         transaction {
             Animal_Performer.update({ Animal_Performer.id eq animalId }) {
-                it[family] = newFamily
+                it[family] = generateText()
             }
         }
     }
@@ -45,4 +46,13 @@ object NonCachingInteraction : DatabaseInteraction {
             Ticket.deleteWhere { Ticket.id eq ticketId }
         }
     }
+
+    fun generateVarchar(len: Int): String {
+        val generatedLen = Random.nextInt(len)
+
+        return String(CharArray(generatedLen) { (Random.nextInt(26) + 'a'.code).toChar() })
+    }
+
+    fun generateText() = generateVarchar(50)
+
 }

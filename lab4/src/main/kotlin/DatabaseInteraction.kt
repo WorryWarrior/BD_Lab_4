@@ -1,7 +1,7 @@
 import org.jetbrains.exposed.sql.ResultRow
 
 interface DatabaseInteraction {
-    fun getAllPerformances() : List<ResultRow>
+    fun getPerformance(id: Long) : List<ResultRow>
 
     fun getTamer(id: Long) : List<ResultRow>
 

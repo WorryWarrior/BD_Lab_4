@@ -1,0 +1,47 @@
+Преимущественно изменение
+
+class CachingInteraction
+Average
+class AddTamerThread - 6.834523
+class ChangeAnimalFamilyThread - 5.159855
+class ChangeTamerNameThread - 4.87359
+class GetAllPerformancesThread - 4.602992
+class GetAnimalPerformersThread - 4.803195
+class GetTamersThread - 5.45941
+class RemoveTamersThread - 4.711239
+
+
+class NonCachingInteraction
+Average
+class AddTamerThread - 4.978756
+class ChangeAnimalFamilyThread - 4.825183
+class ChangeTamerNameThread - 4.603963
+class GetAllPerformancesThread - 3.982216
+class GetAnimalPerformersThread - 4.318895
+class GetTamersThread - 3.97003
+class RemoveTamersThread - 4.008985
+
+____________________________________________________
+
+
+Преимущественно запись
+class NonCachingInteraction
+Average
+class AddTamerThread - 7.256622
+class ChangeAnimalFamilyThread - 5.482954
+class ChangeTamerNameThread - 5.873324
+class GetAllPerformancesThread - 4.390114
+class GetAnimalPerformersThread - 4.728104
+class GetTamersThread - 4.798792
+class RemoveTamersThread - 5.868253
+
+
+class CachingInteraction
+Average
+class AddTamerThread - 5.851724
+class ChangeAnimalFamilyThread - 5.282578
+class ChangeTamerNameThread - 6.544442
+class GetAllPerformancesThread - 4.319393
+class GetAnimalPerformersThread - 4.563182
+class GetTamersThread - 4.846162
+class RemoveTamersThread - 6.056053

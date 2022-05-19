@@ -1,33 +1,50 @@
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
 fun main() {
-    val iterations = 2000
+    connectToDatabase()
+    val iterations = 4_000
 
     for (interaction in (listOf(NonCachingInteraction, CachingInteraction))) {
-        val testThreads = listOf(
-            GetAllPerformancesThread(iterations, interaction),
-            GetTamersThread(iterations, interaction),
-            GetAnimalPerformersThread(iterations, interaction),
-            AddTamerThread(iterations, interaction),
-            ChangeTamerNameThread(iterations, interaction),
-            ChangeAnimalFamilyThread(iterations, interaction),
-            RemoveTamersThread(iterations, interaction)
-        )
+        val coroutines = MutableList( 500) { listOf(
+                AddTamerThread(interaction),
+                ChangeTamerNameThread(interaction),
+                ChangeAnimalFamilyThread(interaction),
+                RemoveTamersThread(interaction)
+        ).random() }
 
-        testThreads.forEach { it.start() }
-        testThreads.forEach { it.join() }
+        repeat(iterations - 500) {
+            coroutines.add(listOf(
+                    GetAllPerformancesThread(interaction),
+                    GetTamersThread(interaction),
+                    GetAnimalPerformersThread(interaction),
+            ).random())
+        }
+
+        coroutines.shuffle()
+        val jobs = mutableListOf<Job>()
+        coroutines.parallelStream().forEach {
+            jobs.add(GlobalScope.launch {
+                it.invoke()
+            })
+        }
+
+        jobs.parallelStream().forEach {
+            runBlocking {
+                it.join()
+            }
+        }
 
         println(interaction::class.java)
         println("Average")
-        for (t in testThreads) {
-            println("${t::class.java} - ${(t.times.sum() / t.iterations) / 1000000f}")
+
+        val grouped = coroutines.groupBy { it::class.java }.toSortedMap(compareBy { it.name })
+        for (t in grouped) {
+            println("${t.key} - ${(t.value.sumOf { it.times.sum() } / t.value.count()) / 1000000f}")
         }
-        println("Max")
-        for (t in testThreads) {
-            println("${t::class.java} - ${t.times.maxByOrNull { it }!! / 1000000f}")
-        }
-        println("Min")
-        for (t in testThreads) {
-            println("${t::class.java} - ${t.times.minByOrNull { it }!! / 1000000f}")
-        }
+
         println()
         println()
     }

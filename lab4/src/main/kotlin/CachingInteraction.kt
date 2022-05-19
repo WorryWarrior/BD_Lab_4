@@ -2,10 +2,10 @@ import org.jetbrains.exposed.sql.ResultRow
 
 object CachingInteraction : DatabaseInteraction {
 
-    private val cache = LruBasedCache<Key, List<ResultRow>>(128)
+    private val cache = LruBasedCache<Key, List<ResultRow>>(512)
 
-    override fun getAllPerformances() =
-        cache.getOrPut(AllPerformancesKey) { NonCachingInteraction.getAllPerformances() }
+    override fun getPerformance(id: Long) =
+        cache.getOrPut(PerformanceKey(id)) { NonCachingInteraction.getPerformance(id) }
 
     override fun getTamer(id: Long) =
         cache.getOrPut(TamerKey(id)) { NonCachingInteraction.getTamer(id) }
@@ -14,25 +14,25 @@ object CachingInteraction : DatabaseInteraction {
         cache.getOrPut(AnimalKey(id)) { NonCachingInteraction.getAnimalPerformer(id) }
 
     override fun addTamer(_name: String, _surname: String) {
-        cache.remove(AllTamersKey)
-
         NonCachingInteraction.addTamer(_name, _surname)
+
+        cache.remove(AllTamersKey)
     }
 
     override fun changeTamerName(tamerId: Long, newTamerName: String) {
-        cache.remove(TamerKey(tamerId))
-
         NonCachingInteraction.changeTamerName(tamerId, newTamerName)
+
+        cache.remove(TamerKey(tamerId))
     }
 
     override fun changeAnimalFamily(animalId: Long, newFamily: String) {
-        cache.remove(AnimalKey(animalId))
-
         NonCachingInteraction.changeAnimalFamily(animalId, newFamily)
+
+        cache.remove(AnimalKey(animalId))
     }
 
     override fun removeTicket(ticketId: Long) {
-        cache.remove(AllTicketsKey)
+        //cache.remove(AllTicketsKey)
 
         NonCachingInteraction.removeTicket(ticketId)
     }
